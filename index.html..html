@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis AI to App</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap">
+<style>
+:root{--bg:#E6FBF5;--ink:#0E3B43;--card:#fff;--line:#0E3B43;--a:#FF6B9D;--b:#FFC93C;--c:#2DD4BF;--d:#7C6CFF;--ok:#16A34A;--bad:#E11D48;--muted:#4B6B70;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B2B31;--ink:#EFFFFB;--card:#123F47;--line:#EFFFFB;--muted:#9CC5C3}}
+:root[data-theme="dark"]{--bg:#0B2B31;--ink:#EFFFFB;--card:#123F47;--line:#EFFFFB;--muted:#9CC5C3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-weight:600;min-height:100vh}
+h1,h2,h3,.disp{font-family:'Baloo 2','Nunito',system-ui,sans-serif;font-weight:800;margin:0;line-height:1.05}
+#app{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+.card{background:var(--card);border:3px solid var(--line);border-radius:18px;box-shadow:5px 5px 0 var(--line);padding:18px}
+.btn{font:inherit;font-weight:800;border:3px solid var(--line);border-radius:14px;padding:12px 18px;background:var(--b);color:#0E3B43;cursor:pointer;box-shadow:4px 4px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--d);outline-offset:3px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:var(--card);color:var(--ink)}
+input,select,textarea{font:inherit;font-weight:800;width:100%;padding:12px 14px;border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
+.hero{font-size:clamp(2.4rem,10vw,4.4rem);letter-spacing:-.02em}
+.hero span{display:inline-block;padding:0 .12em;border-radius:.2em;color:#0E3B43;transform:rotate(-3deg)}
+.modes{display:grid;gap:14px;margin-top:18px}
+.mode{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:16px;color:#0E3B43}
+.mode .ic{font-size:2.2rem}.mode b{font-size:1.25rem;display:block}.mode small{font-weight:600;opacity:.85}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;font-weight:800}
+.pill{border:3px solid var(--line);border-radius:99px;padding:4px 12px;background:var(--card)}
+.bar{height:16px;border:3px solid var(--line);border-radius:99px;overflow:hidden;background:var(--card)}
+.bar i{display:block;height:100%;background:var(--c);width:100%;transition:width .1s linear}
+.bar i.low{background:var(--bad)}
+.q{font-size:clamp(1.4rem,5vw,2rem);margin:18px 0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;min-height:64px;color:#0E3B43;font-size:1.05rem}
+.opt:nth-child(1){background:var(--a)}.opt:nth-child(2){background:var(--b)}.opt:nth-child(3){background:var(--c)}.opt:nth-child(4){background:#B6A8FF}
+.opt.ok{background:var(--ok);color:#fff}.opt.bad{background:var(--bad);color:#fff}.opt.gone{visibility:hidden}
+.shape{font-size:1.3rem}
+.pw{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pw .btn{padding:8px 12px;font-size:.9rem}
+.fb{margin-top:14px;display:flex;gap:12px;align-items:center}
+.fb .em{font-size:2.6rem}
+.lb{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.lb li{display:flex;justify-content:space-between;border:3px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
+.lb li.me{background:var(--b);color:#0E3B43}
+.big{font-size:clamp(3rem,14vw,5rem)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stats div{border:3px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.stats b{display:block;font-size:1.6rem;font-family:'Baloo 2',sans-serif}
+.rev{display:grid;gap:6px;margin:10px 0;padding:0;list-style:none}
+.rev li{padding:8px 12px;border-left:8px solid var(--ok);background:var(--card);border-radius:8px}
+.rev li.x{border-color:var(--bad)}
+.flip{perspective:900px;height:260px;margin:14px 0;cursor:pointer}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip .f{position:absolute;inset:0;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;border:3px solid var(--line);border-radius:18px;box-shadow:5px 5px 0 var(--line);font-size:1.5rem;font-family:'Baloo 2',sans-serif;font-weight:800;color:#0E3B43}
+.flip .fr{background:var(--b)}.flip .bk{background:var(--c);transform:rotateY(180deg)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mg .btn{min-height:58px;background:var(--card);color:var(--ink)}
+.mg .btn.sel{background:var(--b);color:#0E3B43}.mg .btn.done{background:var(--ok);color:#fff;visibility:visible;opacity:.6;pointer-events:none}
+.mg .btn.err{background:var(--bad);color:#fff}
+.shake{animation:shk .45s}@keyframes shk{20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.by{text-align:center;font-weight:800;color:var(--muted);margin:0 0 24px}td,th{padding:6px 8px;border-bottom:2px solid var(--line)}
+.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div><p class="by">Powered by Asep Setiawan</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+var QS=[
+{q:"Apa peran AI dalam paradigma baru 'AI sebagai Co-Developer'?",o:["Hanya mesin pencari","Programmer teknis yang diarahkan manusia","Pengganti manusia sepenuhnya","Pemain game"],a:1,e:"Manusia menjadi Direktur pengarah, AI menjadi Programmer teknis."},
+{q:"Dalam anatomi aplikasi web, HTML berperan sebagai…",o:["Otot","Kulit","Kerangka","Otak"],a:2,e:"HTML adalah struktur dasar dan pondasi aplikasi."},
+{q:"CSS bertugas mengatur…",o:["Desain, warna, dan tata letak","Database","Pengiriman email","Penyimpanan cloud"],a:0,e:"CSS adalah kulit aplikasi: tampilan dan tata letak."},
+{q:"Interaksi, animasi, dan fungsi tombol dikendalikan oleh…",o:["HTML","JavaScript","Gmail","PDF"],a:1,e:"JavaScript adalah otot aplikasi."},
+{q:"Google Apps Script berperan sebagai…",o:["Kulit","Kerangka","Otot","Otak (backend dan integrasi database)"],a:3,e:"Apps Script menjadi backend yang terhubung ke Gmail, Drive, dan Sheets."},
+{q:"Rumus prompt yang presisi: Role + Objective + Features + Design + …",o:["Tech","Sound","Price","Chat"],a:0,e:"Role + Objective + Features + Design + Tech = Source Code."},
+{q:"Proyek utama workshop ini adalah…",o:["Game balap","Smart Letter Automation","Toko online","Aplikasi musik"],a:1,e:"Satu klik untuk membuat, mencetak, mengirim, dan mengarsipkan dokumen resmi."},
+{q:"Fungsi yang menjembatani frontend browser dengan backend Apps Script adalah…",o:["window.print","document.write","google.script.run","alert"],a:2,e:"google.script.run memanggil fungsi backend dari halaman web."},
+{q:"API Sheets dalam aplikasi surat digunakan sebagai…",o:["Pengiriman","Penyimpanan file","Desain","Database (buku besar digital)"],a:3,e:"Sheets mencatat nomor surat, tanggal, penerima, link, dan status."},
+{q:"Saat deploy web app, pengaturan 'Who has access' diisi 'Anyone' agar…",o:["Siapa pun bisa mengakses lewat URL","Hanya pemilik yang bisa buka","Kode terhapus","Aplikasi berubah jadi PDF"],a:0,e:"Hasilnya aplikasi cloud-hosted yang bisa dibuka dari perangkat apa pun."},
+{q:"Mana yang termasuk Red Flags saat membuat aplikasi dengan AI?",o:["Otorisasi izin Google","Pengujian di sandbox","Prompt terlalu umum","Penanganan error"],a:2,e:"Prompt umum, tanpa pengujian, dan fitur kosong adalah tanda bahaya."},
+{q:"Inti dari 'No-Code Builder's Flywheel' adalah…",o:["Menghafal sintaks","Dialog dan iterasi berkelanjutan","Menyalin kode tanpa uji","Menghindari AI"],a:1,e:"Susun ide, bangun prompt, generate kode, lalu uji dan koreksi berulang."}];
+var PAIRS=[["HTML","Kerangka"],["CSS","Kulit"],["JavaScript","Otot"],["Apps Script","Otak"],["API Gmail","Pengiriman"],["API Sheets","Database"]];
+var BOTS=["Rani","Bayu","Dewi","Agus"];
+var $=function(s){return document.querySelector(s)};
+var app=$('#app'),S={name:'',T:15,timer:null};
+function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function beep(f,d,t,v){try{var c=S.ac||(S.ac=new (window.AudioContext||window.webkitAudioContext)());var o=c.createOscillator(),g=c.createGain();o.type=t||'square';o.frequency.value=f;g.gain.setValueAtTime(v||.07,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+function seq(n,t){n.forEach(function(f,i){setTimeout(function(){beep(f,.16,t)},i*110)})}
+function shared(){var el=$('#wlb');
+ var t=setTimeout(function(){el.innerHTML='<li>Papan skor bersama belum bisa dimuat. Buka lewat tautan workshop dan pastikan kamu sudah masuk.</li>'},10000);
+ (window.claude&&claude.use?claude.use('db'):Promise.resolve(null)).then(function(db){
+  if(!db){clearTimeout(t);el.innerHTML='<li>Papan skor bersama hanya aktif jika kamu masuk lewat tautan workshop.</li>';return}
+  var col=db.collection('scores_'+S.set);
+  col.doc(Date.now()+'-'+Math.random().toString(36).slice(2,7)).set({name:S.name,score:S.score,ok:S.ok,ts:Date.now()}).catch(function(){});
+  col.orderBy('score','desc').limit(10).onSnapshot(function(sn){clearTimeout(t);
+   el.innerHTML=sn.docs.map(function(d,i){var x=d.data();return'<li><span>'+(i+1)+'. '+esc(String(x.name))+'</span><b>'+Number(x.score)+'</b></li>'}).join('')||'<li>Belum ada skor.</li>'},
+   function(){clearTimeout(t);el.innerHTML='<li>Papan skor bersama gagal dimuat.</li>'});
+ }).catch(function(){clearTimeout(t);el.innerHTML='<li>Papan skor bersama gagal dimuat.</li>'});
+}
+function stop(){clearInterval(S.timer)}
+
+function home(){
+ stop();
+ app.innerHTML='<h1 class="hero">Kuis <span style="background:var(--b)">AI to App</span>!</h1>'+
+ '<p style="font-size:1.1rem;margin:10px 0 18px">Uji pemahamanmu dari workshop Dari Ide Menjadi Aplikasi Nyata. Jawab cepat, kumpulkan poin, dan naik ke papan skor peserta.</p>'+
+ '<div class="card"><label for="nm" class="disp" style="font-size:1.2rem">Siapa namamu?</label><input id="nm" maxlength="14" placeholder="Ketik nama panggilan" value="'+esc(S.name)+'" style="margin-top:8px"></div>'+
+ '<div class="modes"><button class="btn mode" style="background:var(--d);color:#fff" data-m="pre"><span class="ic">📝</span><span><b>Tes Awal Bapak/Ibu</b><small>20 soal pengantar AI dan pembuatan aplikasi</small></span></button>'+
+ '<button class="btn mode" style="background:var(--a)" data-m="quiz"><span class="ic">⚡</span><span><b>Kuis Kilat</b><small>10 soal, timer, streak, power-up, papan skor langsung</small></span></button>'+
+ '<button class="btn mode" style="background:var(--c)" data-m="flash"><span class="ic">🃏</span><span><b>Kartu Belajar</b><small>Balik kartu dan tandai mana yang sudah kamu hafal</small></span></button>'+
+ '<button class="btn mode" style="background:var(--b)" data-m="match"><span class="ic">🧩</span><span><b>Jodohkan</b><small>Cocokkan teknologi dengan perannya secepat mungkin</small></span></button>'+'<div class="row"><button class="btn ghost" id="qrb">📱 Kode QR</button><button class="btn ghost" id="adm">🔐 Login Admin</button></div><div id="qrc"></div></div>';
+ $('#qrb').onclick=showQR;$('#adm').onclick=function(){S.name=$('#nm').value;S.auth?admin():login()};
+ document.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){
+  S.name=($('#nm').value.trim()||'Pemain').slice(0,14);
+  ({quiz:function(){startQuiz('kuis')},pre:function(){startQuiz('pre')},flash:startFlash,match:startMatch})[b.dataset.m]()}});
+}
+
+/* ---------- Kuis Kilat ---------- */
+function startQuiz(set){
+ S.set=set||'kuis';S.qs=shuffle(bank(S.set)).map(function(q){var ix=shuffle([0,1,2,3]);return{q:q.q,o:ix.map(function(i){return q.o[i]}),a:ix.indexOf(q.a),e:q.e}});S.i=0;S.score=0;S.streak=0;S.best=0;S.ok=0;S.log=[];
+ S.pw={half:1,time:1,x2:1};
+ S.bots=S.set==='pre'?[]:BOTS.map(function(n){return{n:n,s:0}});
+ showQ();
+}
+function showQ(){
+ stop();seq([392,523,659],"triangle");var q=S.qs[S.i];S.left=S.T;S.locked=false;S.dbl=false;S.max=S.T;
+ var sh=['▲','◆','●','■'];
+ app.innerHTML='<div class="top"><span class="pill">Soal '+(S.i+1)+'/'+S.qs.length+'</span><span class="pill">🔥 '+S.streak+'</span><span class="pill" id="sc">'+S.score+' poin</span></div>'+
+ '<div class="bar" role="progressbar" aria-label="Sisa waktu"><i id="tb"></i></div>'+
+ '<h2 class="q">'+esc(q.q)+'</h2><div class="opts" id="opts"></div>'+
+ '<div class="pw"><button class="btn ghost" id="p1">✂️ 50:50</button><button class="btn ghost" id="p2">⏱️ +10 detik</button><button class="btn ghost" id="p3">✨ Poin x2</button></div><div id="fb"></div>';
+ var od=$('#opts');
+ q.o.forEach(function(t,k){var b=document.createElement('button');b.className='btn opt';b.innerHTML='<span class="shape">'+sh[k]+'</span><span>'+esc(t)+'</span>';b.onclick=function(){answer(k)};od.appendChild(b)});
+ function pw(id,key,fn){var b=$(id);b.disabled=!S.pw[key];b.onclick=function(){if(S.locked||!S.pw[key])return;S.pw[key]=0;b.disabled=true;beep(660,.1);fn()}}
+ pw('#p1','half',function(){var w=[];q.o.forEach(function(_,k){if(k!==q.a)w.push(k)});shuffle(w).slice(0,2).forEach(function(k){od.children[k].classList.add('gone')})});
+ pw('#p2','time',function(){S.left+=10;S.max+=10});
+ pw('#p3','x2',function(){S.dbl=true;$('#p3').textContent='✨ x2 aktif'});
+ S.timer=setInterval(function(){S.left-=.1;var tb=$('#tb');tb.style.width=Math.max(0,S.left/S.max*100)+'%';tb.className=S.left<5?'low':'';if(Math.round(S.left*10)%10===0&&S.left<5.1&&S.left>0)beep(300,.05);if(S.left<=0)answer(-1)},100);
+}
+function answer(k){
+ if(S.locked)return;S.locked=true;stop();
+ var q=S.qs[S.i],good=k===q.a,gain=0,kids=$('#opts').children;
+ for(var x=0;x<kids.length;x++){kids[x].disabled=true;if(x===q.a)kids[x].classList.add('ok');else if(x===k)kids[x].classList.add('bad')}
+ document.querySelectorAll('.pw .btn').forEach(function(b){b.disabled=true});
+ if(good){
+  var mult=1+Math.min(S.streak,4)*.25;
+  gain=Math.round(1000*(.5+.5*Math.max(0,S.left)/S.max)*mult*(S.dbl?2:1));
+  S.score+=gain;S.streak++;S.best=Math.max(S.best,S.streak);S.ok++;seq([523,659,784,1047],"triangle");
+ }else{S.streak=0;seq([220,175,131],"sawtooth");app.classList.add("shake");setTimeout(function(){app.classList.remove("shake")},500)}
+ S.log.push({q:q.q,ok:good,a:q.o[q.a]});
+ S.bots.forEach(function(b){if(Math.random()<.7)b.s+=Math.round(400+Math.random()*600)});
+ var okMsg=["Mantap! Otakmu encer 🧠","Kamu jago banget! 🎉","Cepat dan tepat! 🚀","Gak ada obat! 😎"],badMsg=["Yah, hampir! 😅","Tenang, soal berikutnya pasti bisa 💪","Waktu atau jawabanmu meleset 🙈","Santai, belajar itu proses 🌱"];
+ var me=[{n:S.name,s:S.score,me:1}].concat(S.bots).sort(function(a,b){return b.s-a.s});
+ $('#sc').textContent=S.score+' poin';
+ var last=S.i===S.qs.length-1;
+ $('#fb').innerHTML='<div class="card pop" style="margin-top:16px"><div class="fb"><span class="em">'+(good?'🎉':'😵')+'</span><div><h3>'+(good?'+'+gain+' poin':'Belum tepat')+'</h3><div>'+(good?okMsg:badMsg)[Math.floor(Math.random()*4)]+'</div><div style="color:var(--muted);margin-top:4px">'+esc(q.e)+'</div></div></div>'+
+ '<ol class="lb">'+me.slice(0,5).map(function(p,r){return'<li class="'+(p.me?'me':'')+'"><span>'+(r+1)+'. '+esc(p.n)+'</span><b>'+p.s+'</b></li>'}).join('')+'</ol>'+
+ '<button class="btn" id="nx" style="margin-top:14px;width:100%">'+(last?'Lihat hasil':'Soal berikutnya')+'</button></div>';
+ $('#nx').focus();
+ $('#nx').onclick=function(){if(last)result();else{S.i++;showQ()}};
+}
+function result(){
+ stop();seq([523,659,784,659,784,1047,1319],'triangle');var all=[{n:S.name,s:S.score,me:1}].concat(S.bots).sort(function(a,b){return b.s-a.s});
+ var rank=all.findIndex(function(p){return p.me})+1,n=S.qs.length,acc=Math.round(S.ok/n*100);
+ var medal=rank===1?'🏆':rank===2?'🥈':rank===3?'🥉':'🎯';
+ app.innerHTML='<div class="card pop" style="text-align:center"><div class="big">'+medal+'</div><h1>Peringkat '+rank+' dari '+all.length+'</h1><p style="font-size:1.1rem">'+esc(S.name)+', skormu <b>'+S.score+'</b> poin.</p></div>'+
+ '<div class="stats"><div><b>'+acc+'%</b>akurasi</div><div><b>'+S.ok+'/'+n+'</b>benar</div><div><b>🔥'+S.best+'</b>streak terbaik</div></div>'+
+ '<h3>Papan skor putaran ini</h3><ol class="lb">'+all.map(function(p,r){return'<li class="'+(p.me?'me':'')+'"><span>'+(r+1)+'. '+esc(p.n)+'</span><b>'+p.s+'</b></li>'}).join('')+'</ol>'+
+ '<h3 style="margin-top:18px">Papan skor workshop</h3><ol class="lb" id="wlb"><li>Memuat…</li></ol><h3 style="margin-top:18px">Analisis jawaban</h3><ul class="rev">'+S.log.map(function(l){return'<li class="'+(l.ok?'':'x')+'">'+(l.ok?'✅ ':'❌ ')+esc(l.q)+(l.ok?'':'<br><small>Jawaban benar: '+esc(l.a)+'</small>')+'</li>'}).join('')+'</ul>'+
+ '<div class="row" style="margin-top:16px"><button class="btn" id="again" style="background:var(--a)">Main lagi</button><button class="btn ghost" id="fl">Pelajari kartu</button><button class="btn ghost" id="hm">Menu</button></div>';
+ shared();$('#again').onclick=function(){startQuiz(S.set)};$('#fl').onclick=startFlash;$('#hm').onclick=home;
+}
+
+/* ---------- Kartu Belajar ---------- */
+function startFlash(){S.deck=shuffle(bank(S.set));S.fi=0;S.known=0;showCard()}
+function showCard(){
+ if(S.fi>=S.deck.length){
+  app.innerHTML='<div class="card pop" style="text-align:center"><div class="big">📚</div><h1>Sesi selesai!</h1><p style="font-size:1.1rem">Kamu hafal <b>'+S.known+'</b> dari '+S.deck.length+' kartu.</p><div class="row"><button class="btn" id="r1">Ulangi</button><button class="btn ghost" id="hm">Menu</button></div></div>';
+  $('#r1').onclick=startFlash;$('#hm').onclick=home;return}
+ var c=S.deck[S.fi];
+ app.innerHTML='<div class="top"><button class="btn ghost" id="hm" style="padding:6px 12px">← Menu</button><span class="pill">Kartu '+(S.fi+1)+'/'+S.deck.length+'</span></div>'+
+ '<div class="flip" id="fp" tabindex="0" role="button" aria-label="Balik kartu"><div><div class="f fr">'+esc(c.q)+'</div><div class="f bk"><span>'+esc(c.o[c.a])+'<br><small style="font-family:Nunito;font-weight:600">'+esc(c.e)+'</small></span></div></div></div>'+
+ '<p style="text-align:center;color:var(--muted)">Ketuk kartu untuk membalik</p>'+
+ '<div class="row"><button class="btn" id="no" style="background:var(--a)">Belum hafal</button><button class="btn" id="yes" style="background:var(--c)">Sudah hafal</button></div>';
+ var fp=$('#fp');fp.onclick=function(){fp.classList.toggle('on')};fp.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fp.click()}};
+ $('#hm').onclick=home;
+ $('#yes').onclick=function(){S.known++;S.fi++;showCard()};
+ $('#no').onclick=function(){S.deck.push(c);S.fi++;showCard()};
+}
+
+/* ---------- Jodohkan ---------- */
+function startMatch(){
+ stop();S.t0=Date.now();S.sel=null;S.done=0;S.miss=0;
+ var L=shuffle(PAIRS.map(function(p,i){return{t:p[0],i:i}})),R=shuffle(PAIRS.map(function(p,i){return{t:p[1],i:i}}));
+ app.innerHTML='<div class="top"><button class="btn ghost" id="hm" style="padding:6px 12px">← Menu</button><span class="pill" id="mt">0 dtk</span><span class="pill" id="ms">0/'+PAIRS.length+'</span></div>'+
+ '<h2>Jodohkan teknologi dengan perannya</h2><div class="mg" id="mg"></div>';
+ $('#hm').onclick=home;
+ var g=$('#mg');
+ L.forEach(function(l,k){[['L',l],['R',R[k]]].forEach(function(x){
+  var b=document.createElement('button');b.className='btn';b.textContent=x[1].t;b.dataset.s=x[0];b.dataset.i=x[1].i;
+  b.onclick=function(){pick(b)};g.appendChild(b)})});
+ S.timer=setInterval(function(){$('#mt').textContent=Math.round((Date.now()-S.t0)/1000)+' dtk'},500);
+}
+function pick(b){
+ if(!S.sel){S.sel=b;b.classList.add('sel');beep(520,.06);return}
+ var a=S.sel;
+ if(a===b){b.classList.remove('sel');S.sel=null;return}
+ if(a.dataset.s===b.dataset.s){a.classList.remove('sel');S.sel=b;b.classList.add('sel');return}
+ S.sel=null;a.classList.remove('sel');
+ if(a.dataset.i===b.dataset.i){
+  a.classList.add('done');b.classList.add('done');S.done++;beep(880,.12);$('#ms').textContent=S.done+'/'+PAIRS.length;
+  if(S.done===PAIRS.length){stop();var s=Math.round((Date.now()-S.t0)/1000);
+   setTimeout(function(){app.innerHTML='<div class="card pop" style="text-align:center"><div class="big">🧩</div><h1>Semua cocok!</h1><p style="font-size:1.1rem">Waktu <b>'+s+' detik</b> dengan <b>'+S.miss+'</b> salah pasang.</p><div class="row"><button class="btn" id="r1">Main lagi</button><button class="btn ghost" id="hm2">Menu</button></div></div>';$('#r1').onclick=startMatch;$('#hm2').onclick=home},500)}
+ }else{
+  S.miss++;beep(180,.2);a.classList.add('err');b.classList.add('err');
+  setTimeout(function(){a.classList.remove('err');b.classList.remove('err')},450);
+ }
+}
+var LINK='https://claude.ai/share/5f938871-d686-48e9-8f66-593129d3e346';
+function P(t){return t.trim().split('\n').map(function(l){var x=l.split('|');return{q:x[0],o:x.slice(1,5),a:+x[5],e:x[6]||''}})}
+var PRE=P(`Apa kepanjangan AI?|Automatic Internet|Artificial Intelligence|Applied Interface|Advanced Input|1|AI adalah kecerdasan buatan.
+Manakah yang merupakan asisten AI percakapan?|Claude|Microsoft Paint|Notepad|Kalkulator|0|Claude, ChatGPT, dan Gemini adalah asisten AI.
+Instruksi yang kita ketik ke AI disebut…|Password|Prompt|Cookie|Domain|1|Prompt adalah instruksi untuk AI.
+Prompt yang baik sebaiknya…|Sangat singkat dan umum|Jelas, spesifik, dan memberi konteks|Hanya berisi emoji|Tanpa tujuan|1|Makin jelas instruksi, makin tepat hasilnya.
+Bahasa untuk membuat struktur halaman web adalah…|CSS|JavaScript|HTML|SQL|2|HTML adalah kerangka halaman web.
+Mempercantik warna dan tata letak web memakai…|CSS|HTML|Excel|PDF|0|CSS mengatur tampilan.
+Membuat tombol di web bisa berfungsi memakai…|HTML|JavaScript|Word|Paint|1|JavaScript memberi interaksi.
+Google Apps Script dipakai untuk…|Mengedit foto|Mengotomatiskan Sheets, Docs, dan Gmail|Memutar video|Mencetak buku|1|Apps Script menjadi backend di ekosistem Google.
+Aplikasi web bisa dibuka dari HP tanpa instal jika…|Dipublikasikan ke sebuah URL|Disimpan di flashdisk|Dicetak|Dikirim lewat pos|0|Web app diakses lewat tautan.
+Penggunaan AI yang bijak dalam pendidikan adalah…|Menyalin hasil AI tanpa memeriksa|Memverifikasi hasil AI sebelum dipakai|Menyerahkan semua tugas ke AI|Menghindari AI sepenuhnya|1|Manusia tetap memvalidasi.
+Data yang sebaiknya TIDAK dimasukkan ke AI publik adalah…|Ide judul|Materi umum|Data pribadi siswa|Contoh soal umum|2|Lindungi data pribadi.
+AI kadang menjawab salah tetapi terdengar meyakinkan. Ini disebut…|Enkripsi|Kompresi|Sinkronisasi|Halusinasi|3|Selalu cek fakta jawaban AI.
+Spreadsheet yang bisa dipakai sebagai database sederhana adalah…|Google Maps|Google Sheets|Google Earth|Google Translate|1|Sheets menyimpan data terstruktur.
+Jika kode buatan AI error, langkah terbaik adalah…|Menyerah|Menyalin pesan error dan meminta AI memperbaiki|Menghapus semua kode|Mengganti komputer|1|Debugging bisa dilakukan lewat dialog.
+Format dokumen resmi yang siap dibagikan dan dicetak adalah…|MP3|ZIP|PDF|EXE|2|PDF menjaga tata letak.
+Langkah pertama membuat aplikasi dengan AI adalah…|Menulis kode|Merumuskan masalah dan ide|Deploy|Membeli domain|1|Mulai dari masalah yang ingin diselesaikan.
+Rumus prompt: Role + Objective + Features + Design + …|Time|Tax|Text|Tech|3|Lima unsur ini menghasilkan source code.
+Pekerjaan guru yang bisa diotomatisasi aplikasi adalah…|Memilih kurikulum nasional|Membuat surat, rekap nilai, dan absensi|Memarahi siswa|Mengajar tanpa persiapan|1|Tugas administratif repetitif cocok diotomatisasi.
+Proses membuat aplikasi bisa diakses publik lewat URL disebut…|Debugging|Scanning|Deployment|Formatting|2|Deployment menayangkan aplikasi.
+Peran manusia saat AI menjadi co-developer adalah…|Penonton|Pengganti AI|Tidak berperan|Pengarah yang menguji dan memvalidasi|3|Manusia sebagai Direktur, AI sebagai Programmer teknis.`);
+function bank(s){return s==='pre'?PRE:QS}
+function ea(t){return esc(String(t)).replace(/"/g,'&quot;')}
+function drawQR(el){try{new QRCode(el,{text:S.link||selfURL()||LINK,width:220,height:220,colorDark:'#0E3B43',colorLight:'#ffffff'})}catch(e){el.textContent=LINK}}
+function showQR(){var c=$('#qrc');if(c.innerHTML){c.innerHTML='';return}c.innerHTML='<div class="card pop" style="text-align:center;margin-top:14px"><div id="qrx" style="display:inline-block;padding:10px;background:#fff;border-radius:12px"></div><p>Pindai untuk membuka kuis</p></div>';drawQR($('#qrx'))}
+function refreshHome(){if($('.hero')){S.name=$('#nm').value;home()}}
+function init(){
+ if(!(window.claude&&claude.use))return;
+ claude.use('user').then(function(u){return u?u.canEdit():false}).then(function(ok){if(ok){S.admin=1;refreshHome()}}).catch(function(){});
+ claude.use('db').then(function(db){if(!db)return;S.db=db;db.doc('bank/link').get().then(function(sn){var d=sn.data();if(d&&d.url)S.link=d.url}).catch(function(){});['kuis','pre'].forEach(function(k){db.doc('bank/'+k).get().then(function(sn){var d=sn.data();if(d&&d.json){var a=JSON.parse(d.json),t=bank(k);t.length=0;a.forEach(function(x){t.push(x)})}}).catch(function(){})})}).catch(function(){});
+}
+function collect(){var cs=document.querySelectorAll('.qc');if(!cs.length)return;S.items=[].map.call(cs,function(c){return{q:c.querySelector('.eq').value,o:[].map.call(c.querySelectorAll('.eo'),function(i){return i.value}),a:+c.querySelector('.ea').value,e:c.querySelector('.ee').value}})}
+function admin(tab){
+ stop();if(S.unsub){S.unsub();S.unsub=null}
+ tab=tab||'soal';var set=S.aset||'kuis';
+ function tb(t,l){return'<button class="btn'+(tab===t?'':' ghost')+'" data-t="'+t+'">'+l+'</button>'}
+ app.innerHTML='<div class="top"><button class="btn ghost" id="hm" style="padding:6px 12px">← Menu</button><span class="pill">Panel Admin</span></div><div class="row">'+tb('soal','Soal')+tb('hasil','Hasil')+tb('qr','Bagikan')+'</div>'+
+ '<select id="st" aria-label="Set soal" style="margin-top:12px"><option value="kuis">Kuis Kilat (dari materi PDF)</option><option value="pre">Tes Awal Bapak/Ibu (20 soal)</option></select><div id="ad" style="margin-top:12px"></div>';
+ $('#st').value=set;$('#st').onchange=function(){S.aset=this.value;S.items=null;admin(tab)};
+ $('#hm').onclick=home;
+ document.querySelectorAll('[data-t]').forEach(function(b){b.onclick=function(){collect();admin(b.dataset.t)}});
+ ({soal:aSoal,hasil:aHasil,qr:aQR})[tab](set);
+}
+function parseFile(t,n){
+ t=t.replace(/^\uFEFF/,'');
+ if(/\.json$/i.test(n))return JSON.parse(t).map(function(x){return{q:String(x.q),o:x.o.map(String).slice(0,4),a:+x.a||0,e:String(x.e||'')}});
+ var ls=t.split(/\r?\n/).filter(function(l){return l.trim()}),d=ls[0].indexOf(';')>-1?';':',';
+ var rows=ls.map(function(l){return l.split(d)});
+ if('ABCD'.indexOf((rows[0][5]||'').trim().toUpperCase())<0||!(rows[0][5]||'').trim())rows.shift();
+ return rows.map(function(r){return{q:r[0].trim(),o:r.slice(1,5).map(function(x){return(x||'').trim()}),a:Math.max(0,'ABCD'.indexOf((r[5]||'A').trim().toUpperCase())),e:(r[6]||'').trim()}});
+}
+function aSoal(set){
+ if(!S.items)S.items=JSON.parse(JSON.stringify(bank(set)));
+ var h='<p style="color:var(--muted)">Ubah soal, pilih kunci jawaban, lalu tekan Simpan. Perubahan langsung dipakai peserta. File CSV: kolom pertanyaan, A, B, C, D, kunci (A-D), penjelasan; atau file JSON.</p><div class="row"><button class="btn" id="ad1">+ Soal</button><button class="btn" id="sv" style="background:var(--c)">Simpan</button><label class="btn ghost" style="text-align:center">Unggah file<input type="file" id="fu" accept=".json,.csv,.txt" hidden></label></div><p id="msg" role="status" style="font-weight:800"></p>';
+ S.items.forEach(function(it,i){h+='<div class="card qc" style="margin-top:12px"><b>Soal '+(i+1)+'</b><textarea class="eq" rows="2" style="margin:6px 0">'+esc(it.q)+'</textarea>'+[0,1,2,3].map(function(k){return'<input class="eo" aria-label="Pilihan '+'ABCD'[k]+'" style="margin-bottom:6px" value="'+ea(it.o[k]||'')+'">'}).join('')+'<select class="ea" aria-label="Kunci jawaban">'+[0,1,2,3].map(function(k){return'<option value="'+k+'"'+(it.a===k?' selected':'')+'>Kunci: '+'ABCD'[k]+'</option>'}).join('')+'</select><input class="ee" style="margin-top:6px" aria-label="Penjelasan" placeholder="Penjelasan" value="'+ea(it.e||'')+'"><button class="btn ghost del" data-i="'+i+'" style="margin-top:8px">Hapus soal</button></div>'});
+ $('#ad').innerHTML=h;
+ $('#ad1').onclick=function(){collect();S.items.push({q:'',o:['','','',''],a:0,e:''});aSoal(set)};
+ document.querySelectorAll('.del').forEach(function(b){b.onclick=function(){collect();S.items.splice(+b.dataset.i,1);aSoal(set)}});
+ $('#sv').onclick=function(){collect();var m=$('#msg');
+  if(S.items.some(function(x){return!x.q.trim()||x.o.some(function(o){return!o.trim()})})){m.textContent='Lengkapi teks soal dan keempat pilihan.';return}
+  if(!S.db){m.textContent='Database belum terhubung. Buka ulang halaman.';return}
+  S.db.doc('bank/'+set).set({json:JSON.stringify(S.items)}).then(function(){var t=bank(set);t.length=0;S.items.forEach(function(x){t.push(JSON.parse(JSON.stringify(x)))});m.textContent='Tersimpan ✅ ('+S.items.length+' soal)'}).catch(function(){m.textContent='Gagal menyimpan. Pastikan kamu masuk sebagai pemilik.'})};
+ $('#fu').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{S.items=parseFile(r.result,f.name);aSoal(set);$('#msg').textContent=S.items.length+' soal dimuat. Tekan Simpan untuk menerapkan.'}catch(e){$('#msg').textContent='Format file tidak dikenali.'}};r.readAsText(f)};
+}
+function aHasil(set){
+ var el=$('#ad');el.innerHTML='<p id="cnt" style="font-weight:800">Memuat…</p><div style="overflow-x:auto"><table id="tbl" style="width:100%;border-collapse:collapse"></table></div><button class="btn" id="dl" style="margin-top:12px">Unduh CSV</button>';
+ if(!S.db){$('#cnt').textContent='Database belum terhubung.';return}
+ var rows=[];
+ S.unsub=S.db.collection('scores_'+set).orderBy('score','desc').limit(500).onSnapshot(function(sn){rows=sn.docs.map(function(d){return d.data()});$('#cnt').textContent=rows.length+' hasil';
+  $('#tbl').innerHTML='<tr><th align="left">#</th><th align="left">Nama</th><th>Skor</th><th>Benar</th><th>Waktu</th></tr>'+rows.map(function(x,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(String(x.name))+'</td><td align="center">'+Number(x.score)+'</td><td align="center">'+Number(x.ok)+'</td><td align="center">'+new Date(x.ts).toLocaleString('id-ID')+'</td></tr>'}).join('')},function(){$('#cnt').textContent='Gagal memuat hasil.'});
+ $('#dl').onclick=function(){claude.use('downloads').then(function(d){if(!d)return;var c='Nama,Skor,Benar,Waktu\n'+rows.map(function(x){return['"'+String(x.name).replace(/"/g,'""')+'"',x.score,x.ok,'"'+new Date(x.ts).toLocaleString('id-ID')+'"'].join(',')}).join('\n');d.save({filename:'hasil-'+set+'.csv',data:c})}).catch(function(){})};
+}
+function aQR(){$('#ad').innerHTML='<div class="card" style="text-align:center"><div id="qrx" style="display:inline-block;padding:10px;background:#fff;border-radius:12px"></div><p style="word-break:break-all">'+(S.link||selfURL()||LINK)+'</p><p style="color:var(--muted)">Tampilkan di layar proyektor agar peserta memindai dengan kamera HP.</p></div><div class="card" style="margin-top:12px"><label for="lk" class="disp">Tempel tautan publik kuis</label><input id="lk" placeholder="https://..." style="margin:8px 0"><button class="btn" id="mk">Buat QR dari tautan ini</button><p id="lm" role="status"></p></div>';drawQR($('#qrx'));$('#lk').value=S.link||'';$('#mk').onclick=function(){var u=$('#lk').value.trim();if(!/^https:\/\//.test(u)){$('#lm').textContent='Tautan harus diawali https://';return}S.link=u;if(S.db)S.db.doc('bank/link').set({url:u}).catch(function(){});aQR()}}
+function selfURL(){try{if(/^https?:$/.test(location.protocol)&&!/claude|anthropic/.test(location.hostname))return location.href.split('#')[0]}catch(e){}return null}
+function login(){
+ stop();
+ app.innerHTML='<div class="top"><button class="btn ghost" id="hm" style="padding:6px 12px">← Menu</button><span class="pill">Login Admin</span></div><div class="card"><label for="lu" class="disp">Username</label><input id="lu" autocomplete="username" style="margin:6px 0 12px"><label for="lp" class="disp">Password</label><input id="lp" type="password" autocomplete="current-password" style="margin:6px 0 12px"><button class="btn" id="lg" style="width:100%">Masuk</button><p id="le" role="alert" style="font-weight:800"></p></div>';
+ $('#hm').onclick=home;
+ function go(){var m=$('#le');if(!(window.crypto&&crypto.subtle)){m.textContent='Browser tidak mendukung login ini.';return}
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode('kuis:'+$('#lu').value.trim().toLowerCase()+':'+$('#lp').value)).then(function(b){var h=[].map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2)}).join('');if(h==='c209f41af489f23a6acc1aa6ac21d18060e5504d0407b865114842f062683247'){S.auth=1;admin()}else m.textContent='Username atau password salah.'})}
+ $('#lg').onclick=go;$('#lp').onkeydown=function(e){if(e.key==='Enter')go()};
+}
+home();init();
+</script>
+</body>
+</html>
